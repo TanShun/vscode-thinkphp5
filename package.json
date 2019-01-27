@@ -1,0 +1,54 @@
+{
+	"name": "vscode-thinkphp5",
+	"displayName": "ThinkPHP5",
+	"publisher": "TanShun",
+	"description": "A vscode extension for ThinkPHP5",
+	"version": "0.0.1",
+	"engines": {
+		"vscode": "^1.30.0"
+	},
+	"categories": [
+		"Other"
+	],
+	"activationEvents": [
+		"onCommand:extension.helloWorld",
+		"onLanguage:html"
+	],
+	"main": "./out/extension.js",
+	"contributes": {
+		"commands": [
+			{
+				"command": "extension.helloWorld",
+				"title": "Hello World"
+			}
+		],
+		"configuration": {
+			"title": "ThinkPHP5 Extension Configuration",
+			"properties": {
+				"thinkphp5.php": {
+					"type": "string",
+					"default": "php",
+					"description": "php executable path"
+				}
+			}
+		}
+	},
+	"scripts": {
+		"vscode:prepublish": "npm run compile && node ./node_modules/cp-cli/bin/cp-cli ./src/php ./out/php",
+		"compile": "tsc -p ./",
+		"watch": "node ./node_modules/concurrently/bin/concurrently -r \"tsc -watch -p ./\" \"node ./build/watch\"",
+		"postinstall": "node ./node_modules/vscode/bin/install",
+		"test": "npm run compile && node ./node_modules/vscode/bin/test"
+	},
+	"devDependencies": {
+		"@types/mocha": "^2.2.42",
+		"@types/node": "^8.10.25",
+		"concurrently": "^4.1.0",
+		"cp-cli": "^1.1.2",
+		"fs-extra": "^7.0.1",
+		"glob-watcher": "^5.0.3",
+		"tslint": "^5.8.0",
+		"typescript": "^3.1.4",
+		"vscode": "^1.1.25"
+	}
+}

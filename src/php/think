@@ -1,0 +1,81 @@
+<?php
+namespace think;
+
+set_error_handler(function ($code, $message, $file, $line) {
+    throw new \Exception("\"$message\" at $file line $line", $code);
+});
+
+class Command
+{
+    protected $arguments = [];
+    protected $message   = [];
+    protected $command   = '';
+    protected $root      = '';
+
+    public function __construct($arguments)
+    {
+        if (count($arguments) < 2) {
+            $this->error('The php command is missing.');
+        }
+        if (count($arguments) < 3) {
+            $this->error('Workspace folder is needed.');
+        }
+        $this->arguments = $arguments;
+        $this->command   = $arguments[1];
+        $this->root      = $arguments[2];
+
+    }
+
+    public function exec()
+    {
+        try {
+            require $this->root . '/thinkphp/base.php';
+            Container::get('app')->path($this->root . '/application/')->initialize();
+
+            switch ($this->command) {
+                case 'config':
+                    $this->getConfig();
+                    break;
+                default:
+                    $this->error('The command "' . $command . '" is incorrect.');
+                    break;
+            }
+        } catch (\Throwable $th) {
+            $this->error($th->getMessage());
+        }
+    }
+
+    protected function getConfig()
+    {
+        $this->success(config('template.tpl_replace_string') ? : []);
+    }
+
+    public function __destruct()
+    {
+        echo(json_encode($this->message));
+    }
+
+    public function debug($content)
+    {
+        $this->message = [
+            'code'    => 2,
+            'message' => 'Debug information',
+            'content' => $content,
+        ];
+        exit;
+    }
+
+    protected function success($content)
+    {
+        $this->message = ['status' => 1, 'message' => 'Success', 'content' => $content];
+        exit;
+    }
+
+    protected function error($message)
+    {
+        $this->message = ['status' => 0, 'message' => $message, 'content' => []];
+        exit;
+    }
+}
+
+(new Command($argv))->exec();
