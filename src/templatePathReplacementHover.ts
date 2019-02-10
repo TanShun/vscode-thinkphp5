@@ -4,7 +4,7 @@ import * as fs from 'fs';
 
 import Utils from './utils';
 
-export default class TemplateFilePathHover implements vscode.HoverProvider {
+export default class TemplatePathReplacementHover implements vscode.HoverProvider {
 
     provideHover(document: vscode.TextDocument, position: vscode.Position, token: vscode.CancellationToken) {
         const root = Utils.rootPath(document);
@@ -19,7 +19,7 @@ export default class TemplateFilePathHover implements vscode.HoverProvider {
                         file = path.join(root.fsPath, 'public', file);
                         try {
                             fs.accessSync(file, fs.constants.F_OK);
-                            return new vscode.Hover(file);
+                            return new vscode.Hover(new vscode.MarkdownString('File path is `' + file + '`, you can follow this link.'));
                         } catch (error) {
                             console.error(`${file} is not exist.`);
                         }

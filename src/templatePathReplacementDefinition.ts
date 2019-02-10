@@ -4,7 +4,7 @@ import * as fs from 'fs';
 
 import Utils from './utils';
 
-export default class TemplateFilePathDefinition implements vscode.DefinitionProvider {
+export default class TemplatePathReplacementDefinition implements vscode.DefinitionProvider {
 
     provideDefinition(document: vscode.TextDocument, position: vscode.Position, token: vscode.CancellationToken) {
         const root = Utils.rootPath(document);

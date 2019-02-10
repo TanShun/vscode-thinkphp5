@@ -12,7 +12,8 @@
 	],
 	"activationEvents": [
 		"onCommand:extension.helloWorld",
-		"onLanguage:html"
+		"onLanguage:html",
+		"onLanguage:php"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
@@ -30,6 +31,11 @@
 					"default": "php",
 					"description": "php executable path"
 				}
+			}
+		},
+		"configurationDefaults": {
+			"[html]": {
+				"editor.links": false
 			}
 		}
 	},
