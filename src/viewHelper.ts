@@ -1,3 +1,6 @@
+import * as vscode from 'vscode';
+import * as tp5 from './tp5';
+
 export default class ViewHelper {
 
     static classify(line: string): { name: string, path: string } | undefined {
@@ -41,22 +44,41 @@ export default class ViewHelper {
         return '';
     }
 
-    static pathinfo(code: string): { class: string, method: string } {
+    static pathinfo(document: vscode.TextDocument): tp5.Pathinfo {
+        let module: string = '',
+            controller: string = '',
+            action: string = '';
+        // Find the module
+        const path: string = document.uri.path;
+        console.log(path)
+        let moduleEnd: number = path.indexOf('controller');
+        if (moduleEnd > 0) {
+            moduleEnd--;
+            console.log(moduleEnd);
+            let moduleStart: number = path.lastIndexOf('/', moduleEnd - 1) || path.lastIndexOf('\\', moduleEnd - 1);
+            console.log(moduleStart);
+            if (moduleStart >= 0) {
+                module = path.substring(moduleStart + 1, moduleEnd);
+            }
+        }
+        // Find the controller
+        const code = document.getText();
         let reg: RegExp = new RegExp('^class (\\\w+)', 'm');
         let matches: RegExpExecArray | null = reg.exec(code);
-        let className: string = '',
-            methodName: string = '';
         if (matches) {
-            className = matches[1];
+            controller = matches[1];
         }
+        // Find the action
         reg = new RegExp('public function (\\\w+)\\\(');
         matches = reg.exec(code);
         if (matches) {
-            methodName = matches[1];
+            action = matches[1];
         }
+
         return {
-            class: className,
-            method: methodName
+            module: module,
+            controller: controller,
+            action: action
         };
     }
 }

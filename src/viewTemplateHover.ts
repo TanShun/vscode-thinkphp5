@@ -10,7 +10,7 @@ export default class ViewTemplateHover implements vscode.HoverProvider {
         if (document.getWordRangeAtPosition(position, reg) !== undefined) {
             const line: vscode.TextLine = document.lineAt(position.line);
             console.log(ViewHelper.classify(line.text));
-            console.log(ViewHelper.pathinfo(document.getText()));
+            console.log(ViewHelper.pathinfo(document));
             // console.log(line.text);
         }
         return new vscode.Hover('This is a view file');

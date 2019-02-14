@@ -1,81 +1,60 @@
 <?php
 namespace think;
 
-set_error_handler(function ($code, $message, $file, $line) {
-    throw new \Exception("\"$message\" at $file line $line", $code);
-});
-
-class Command
+class Message
 {
-    protected $arguments = [];
-    protected $message   = [];
-    protected $command   = '';
-    protected $root      = '';
+    protected $code    = '';
+    protected $message = '';
+    protected $content = null;
 
-    public function __construct($arguments)
+    public function __construct($code = 0, $message = '', $content = null)
     {
-        if (count($arguments) < 2) {
-            $this->error('The php command is missing.');
+        $this->code    = $code;
+        $this->message = $message;
+        $this->content = $content;
+    }
+
+    public function __call(string $name, $arguments)
+    {
+        if (count($arguments) === 0) {
+            return in_array($name, ['code', 'message', 'content']) ? $this->$name : null;
         }
-        if (count($arguments) < 3) {
-            $this->error('Workspace folder is needed.');
-        }
-        $this->arguments = $arguments;
-        $this->command   = $arguments[1];
-        $this->root      = $arguments[2];
-
+        in_array($name, ['code', 'message', 'content']) && $this->$name = $arguments[0];
+        return $this;
     }
 
-    public function exec()
+    public function __toString(): string
     {
-        try {
-            require $this->root . '/thinkphp/base.php';
-            Container::get('app')->path($this->root . '/application/')->initialize();
-
-            switch ($this->command) {
-                case 'config':
-                    $this->getConfig();
-                    break;
-                default:
-                    $this->error('The command "' . $command . '" is incorrect.');
-                    break;
-            }
-        } catch (\Throwable $th) {
-            $this->error($th->getMessage());
-        }
-    }
-
-    protected function getConfig()
-    {
-        $this->success(config('template.tpl_replace_string') ? : []);
-    }
-
-    public function __destruct()
-    {
-        echo(json_encode($this->message));
-    }
-
-    public function debug($content)
-    {
-        $this->message = [
-            'code'    => 2,
-            'message' => 'Debug information',
-            'content' => $content,
-        ];
-        exit;
-    }
-
-    protected function success($content)
-    {
-        $this->message = ['status' => 1, 'message' => 'Success', 'content' => $content];
-        exit;
-    }
-
-    protected function error($message)
-    {
-        $this->message = ['status' => 0, 'message' => $message, 'content' => []];
-        exit;
+        return json_encode([
+            'code'    => $this->code,
+            'message' => $this->message,
+            'content' => $this->content,
+        ]);
     }
 }
 
-(new Command($argv))->exec();
+if ($argc < 2) {
+    exit(new Message(1, 'The php command is missing.'));
+} else if ($argc < 3) {
+    exit(new Message(2, 'Workspace folder is needed.'));
+} else {
+    $appRoot = $argv[1];
+    $argv[0] = $_SERVER['argv'][0] = realpath($appRoot . DIRECTORY_SEPARATOR . 'think');
+    $argc--;
+    unset($argv[1]);
+    unset($_SERVER['argv'][1]);
+    array_merge($argv);
+    array_merge($_SERVER['argv']);
+    $entry = $appRoot . DIRECTORY_SEPARATOR . 'thinkphp' . DIRECTORY_SEPARATOR . 'base.php';
+    if (!is_file($entry)) {
+        exit(new Message(3, 'The entry file "' . $entry . '" for thinkPHP is not found.'));
+    }
+    try {
+        require $entry;
+        Container::get('app')->path($appRoot . DIRECTORY_SEPARATOR . 'application')->initialize();
+        Console::init();
+        Loader::addClassMap(['console' => __DIR__ . DIRECTORY_SEPARATOR . 'console']);
+    } catch (\Throwable $throwable) {
+        exit(new Message(4, $throwable->getMessage()));
+    }
+}
