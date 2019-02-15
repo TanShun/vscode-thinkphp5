@@ -34,9 +34,9 @@ class Message
 }
 
 if ($argc < 2) {
-    exit(new Message(1, 'The php command is missing.'));
+    exit(new Message(1, 'Workspace folder is needed.'));
 } else if ($argc < 3) {
-    exit(new Message(2, 'Workspace folder is needed.'));
+    exit(new Message(2, 'The php command is missing.'));
 } else {
     $appRoot = $argv[1];
     $argv[0] = $_SERVER['argv'][0] = realpath($appRoot . DIRECTORY_SEPARATOR . 'think');
@@ -51,9 +51,13 @@ if ($argc < 2) {
     }
     try {
         require $entry;
+        Loader::addNamespace(['vscode' => __DIR__ . DIRECTORY_SEPARATOR . 'vscode']);
         Container::get('app')->path($appRoot . DIRECTORY_SEPARATOR . 'application')->initialize();
+        if (is_file(__DIR__ . DIRECTORY_SEPARATOR . 'command.php')) {
+            $vscodeCommands = require __DIR__ . DIRECTORY_SEPARATOR . 'command.php';
+            Console::addDefaultCommands($vscodeCommands);
+        }
         Console::init();
-        Loader::addClassMap(['console' => __DIR__ . DIRECTORY_SEPARATOR . 'console']);
     } catch (\Throwable $throwable) {
         exit(new Message(4, $throwable->getMessage()));
     }

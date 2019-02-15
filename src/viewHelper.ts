@@ -50,13 +50,10 @@ export default class ViewHelper {
             action: string = '';
         // Find the module
         const path: string = document.uri.path;
-        console.log(path)
         let moduleEnd: number = path.indexOf('controller');
         if (moduleEnd > 0) {
             moduleEnd--;
-            console.log(moduleEnd);
             let moduleStart: number = path.lastIndexOf('/', moduleEnd - 1) || path.lastIndexOf('\\', moduleEnd - 1);
-            console.log(moduleStart);
             if (moduleStart >= 0) {
                 module = path.substring(moduleStart + 1, moduleEnd);
             }
