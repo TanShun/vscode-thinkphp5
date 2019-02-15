@@ -35,7 +35,7 @@ export function php(appRoot: vscode.Uri, command: string, parameters: string | A
         const result: string = execSync(`${php} ${entry} ${appRoot.fsPath} vscode:${command} ${parameters}`).toString();
         const output: any = JSON.parse(result);
         if (!output) {
-            return { code: 101, message: 'Not a json string: "' + result + '"', content: null }
+            return { code: 101, message: result, content: null };
         }
         return output;
     } catch (error) {
