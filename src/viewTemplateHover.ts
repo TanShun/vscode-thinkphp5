@@ -5,14 +5,18 @@ import * as tp5 from './tp5';
 export default class ViewTemplateHover implements vscode.HoverProvider {
 
     provideHover(document: vscode.TextDocument, position: vscode.Position, token: vscode.CancellationToken) {
-        const appRoot = tp5.appRoot(document);
+        const appRoot: vscode.Uri = tp5.appRoot(document);
         let reg: RegExp = new RegExp('.*(view|fetch)\\\(.*');
         if (document.getWordRangeAtPosition(position, reg) !== undefined) {
             const line: vscode.TextLine = document.lineAt(position.line);
-            console.log(ViewHelper.classify(line.text));
-            console.log(ViewHelper.pathinfo(document));
-            console.log(tp5.viewPath('', ViewHelper.pathinfo(document), appRoot, tp5.php(appRoot, 'config', 'template.')));
+            const type = ViewHelper.classify(line.text);
+            if (type !== undefined) {
+                const viewPath: string | undefined = tp5.viewPath(appRoot, ViewHelper.pathinfo(document), type.path);
+                if (viewPath !== undefined) {
+                    return new vscode.Hover(`The template file is "${viewPath}"`);
+                }
+            }
         }
-        return new vscode.Hover('This is a view file');
+        return null;
     }
 }

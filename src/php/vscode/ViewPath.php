@@ -35,9 +35,9 @@ class ViewPath extends Command
         $method->setAccessible(true);
         $template = $method->invoke($engine, '');
         if (is_file($template)) {
-            $output->write(json_encode(['path' => $template]));
+            $output->write(json_encode(['code' => 0, 'message' => 'OK', 'content' => $template]));
         } else {
-            $output->write('The file "' . $template . '" is not exgist.');
+            $output->write(json_encode(['code' => 1, 'message' => 'The file "' . $template . '" is not exgist.', 'content' => null]));
         }
     }
 }
