@@ -29,6 +29,6 @@ Initial release of thinkphp5. Just done the very basic functions.
 
 ### 0.0.2
 
-Rewrite the bridge between ts and php environment. It can follow the template file witch is used in the action.
+Rewrite the bridge between ts and php environment. It can follow the template file which is used in the action.
 
 **Enjoy!**
