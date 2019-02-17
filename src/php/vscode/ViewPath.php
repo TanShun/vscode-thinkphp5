@@ -10,6 +10,7 @@ use think\console\Output;
 use think\facade\App;
 use think\facade\Request;
 use think\View;
+use think\VscodeMessage;
 
 class ViewPath extends Command
 {
@@ -34,10 +35,9 @@ class ViewPath extends Command
         $method = new ReflectionMethod($engine, 'parseTemplate');
         $method->setAccessible(true);
         $template = $method->invoke($engine, '');
-        if (is_file($template)) {
-            $output->write(json_encode(['code' => 0, 'message' => 'OK', 'content' => $template]));
-        } else {
-            $output->write(json_encode(['code' => 1, 'message' => 'The file "' . $template . '" is not exgist.', 'content' => null]));
+        if (!is_file($template)) {
+            throw new \Exception('The file "' . $template . '" is not exgist.');
         }
+        $output->write((string) new VscodeMessage($template));
     }
 }

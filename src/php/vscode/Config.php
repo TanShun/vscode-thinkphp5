@@ -5,6 +5,7 @@ use think\console\Command;
 use think\console\Input;
 use think\console\input\Argument;
 use think\console\Output;
+use think\VscodeMessage;
 
 class Config extends Command
 {
@@ -17,6 +18,6 @@ class Config extends Command
 
     protected function execute(Input $input, Output $output)
     {
-        $output->write(json_encode(['code' => 0, 'message' => 'OK', 'content' => config($input->getArgument('name'))]));
+        $output->write((string) (new VscodeMessage(config($input->getArgument('name')))));
     }
 }

@@ -5,6 +5,7 @@ use think\console\Command;
 use think\console\Input;
 use think\console\Output;
 use think\facade\App;
+use think\VscodeMessage;
 
 class Version extends Command
 {
@@ -16,6 +17,7 @@ class Version extends Command
 
     protected function execute(Input $input, Output $output)
     {
-        $output->write(json_encode(['code' => 0, 'message' => 'OK', 'content' => App::version()]));
+
+        $output->write((string) new VscodeMessage(App::version()));
     }
 }

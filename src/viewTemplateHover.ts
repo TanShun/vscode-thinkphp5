@@ -11,9 +11,9 @@ export default class ViewTemplateHover implements vscode.HoverProvider {
             const line: vscode.TextLine = document.lineAt(position.line);
             const type = ViewHelper.classify(line.text);
             if (type !== undefined) {
-                const viewPath: string | undefined = tp5.viewPath(appRoot, ViewHelper.pathinfo(document), type.path);
+                const viewPath: string | undefined = tp5.viewPath(appRoot, ViewHelper.pathinfo(appRoot, document, line), type.path);
                 if (viewPath !== undefined) {
-                    return new vscode.Hover(`The template file is "${viewPath}"`);
+                    return new vscode.Hover(new vscode.MarkdownString(`The template file is \`${viewPath}\`, click to follow it.`));
                 }
             }
         }

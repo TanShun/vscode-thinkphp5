@@ -17,20 +17,18 @@ A vscode extension for ThinkPHP5.
 
 * `thinkphp5.php`: The php executable path
 
-```json
-"[html]": {
-    "editor.links": false
-}
-```
-
 ## Known Issues
 
-You should set the `editor.links` to `false` for best result.
+It can't follow the dynamic template's file witch is configured by `$this->view->config()`(Refer to [模板引擎](https://www.kancloud.cn/manual/thinkphp5_1/354068)).
 
 ## Release Notes
 
 ### 0.0.1
 
 Initial release of thinkphp5. Just done the very basic functions.
+
+### 0.0.2
+
+Rewrite the bridge between ts and php environment. It can follow the template file witch is used in the action.
 
 **Enjoy!**

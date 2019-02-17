@@ -44,7 +44,7 @@ export default class ViewHelper {
         return '';
     }
 
-    static pathinfo(document: vscode.TextDocument): tp5.Pathinfo {
+    static pathinfo(appRoot: vscode.Uri, document: vscode.TextDocument, line: vscode.TextLine): tp5.Pathinfo {
         let module: string = '',
             controller: string = '',
             action: string = '';
@@ -66,10 +66,20 @@ export default class ViewHelper {
             controller = matches[1];
         }
         // Find the action
-        reg = new RegExp('public function (\\\w+)\\\(');
+        reg = new RegExp('^namespace (.*?);', 'm');
         matches = reg.exec(code);
-        if (matches) {
-            action = matches[1];
+        if (matches && controller !== '') {
+            const result = tp5.php(appRoot, 'method-detail', matches[1] + '\\' + controller);
+            if (result.code === 0) {
+                const methods: Array<{ class: string, name: string, startLine: number, endLine: number }> = <Array<{ class: string, name: string, startLine: number, endLine: number }>>result.content;
+                for (let index = 0; index < methods.length; index++) {
+                    const method = methods[index];
+                    const lineNumber = line.lineNumber + 1;
+                    if (lineNumber >= method.startLine && lineNumber <= method.endLine) {
+                        action = method.name;
+                    }
+                }
+            }
         }
 
         return {
