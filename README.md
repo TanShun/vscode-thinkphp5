@@ -19,7 +19,7 @@ A vscode extension for ThinkPHP5.
 
 ## Known Issues
 
-It can't follow the dynamic template's file witch is configured by `$this->view->config()`(Refer to [模板引擎](https://www.kancloud.cn/manual/thinkphp5_1/354068)).
+It can't follow the dynamic template's file which is configured by `$this->view->config()`(Refer to [模板引擎](https://www.kancloud.cn/manual/thinkphp5_1/354068)).
 
 ## Release Notes
 
