@@ -36,7 +36,7 @@ class ViewPath extends Command
         $method->setAccessible(true);
         $template = $method->invoke($engine, '');
         if (!is_file($template)) {
-            throw new \Exception('The file "' . $template . '" is not exgist.');
+            throw new \Exception('The file "' . $template . '" is not exist.');
         }
         $output->write((string) new VscodeMessage($template));
     }

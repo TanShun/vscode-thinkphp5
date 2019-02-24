@@ -10,7 +10,7 @@ fse.remove(dist).then(() => {
         var watcher = watch(src);
         watcher.on('change', function (file) {
             fileInfo = path.parse(file);
-            distFile = path.resolve(dist, path.relative(fileInfo.dir, src), fileInfo.base);
+            distFile = path.resolve(dist, path.relative(src, fileInfo.dir), fileInfo.base);
             fse.copy(file, distFile).catch((reason) => {
                 console.error(reason);
             });

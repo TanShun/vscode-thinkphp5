@@ -17,6 +17,13 @@ export interface Message {
     } | null | string;
 }
 
+export interface Controller {
+    namespace: string;
+    name: string;
+    fullName: string;
+    [propName: string]: any;
+}
+
 /**
  * Execute a php command.
  * @param appRoot The application root for thinkPHP
@@ -32,6 +39,7 @@ export function php(appRoot: vscode.Uri, command: string, parameters: string | A
     try {
         // console.log(`PHP command: "${php} ${entry} ${appRoot.fsPath} vscode:${command} ${parameters}"`);
         const result: string = execSync(`${php} ${entry} ${appRoot.fsPath} vscode:${command} ${parameters}`).toString();
+        // console.log(result);
         const output: any = JSON.parse(result);
         if (!output) {
             return { code: 101, message: result, content: null };
@@ -85,4 +93,40 @@ export function tpVersion(appRoot: vscode.Uri): string | undefined {
  */
 export function isTpProject(appRoot: vscode.Uri): boolean {
     return !!tpVersion(appRoot);
+}
+
+export function getModule(uri: vscode.Uri): string | undefined {
+    const path = uri.path;
+    let moduleName: string | undefined = undefined;
+    let moduleEnd: number = path.indexOf('controller');
+    if (moduleEnd > 0) {
+        moduleEnd--;
+        let moduleStart: number = path.lastIndexOf('/', moduleEnd - 1) || path.lastIndexOf('\\', moduleEnd - 1);
+        if (moduleStart >= 0) {
+            moduleName = path.substring(moduleStart + 1, moduleEnd);
+        }
+    }
+    return moduleName;
+}
+
+export function getController(document: vscode.TextDocument): Controller | null {
+    const code = document.getText();
+    let reg: RegExp = new RegExp('^class (\\\w+)', 'm'),
+        matches: RegExpExecArray | null = reg.exec(code),
+        namespace: string = '',
+        name: string = '',
+        fullName: string = '';
+
+    if (!matches) {
+        return null;
+    }
+    fullName = name = matches[1];
+
+    reg = new RegExp('^namespace (.*?);', 'm');
+    matches = reg.exec(code);
+    if (matches) {
+        namespace = matches[1];
+        fullName = namespace + '\\' + name;
+    }
+    return { namespace, name, fullName };
 }

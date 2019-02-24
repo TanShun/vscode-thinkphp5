@@ -17,7 +17,6 @@ class Version extends Command
 
     protected function execute(Input $input, Output $output)
     {
-
         $output->write((string) new VscodeMessage(App::version()));
     }
 }

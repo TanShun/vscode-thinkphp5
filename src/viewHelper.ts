@@ -45,31 +45,12 @@ export default class ViewHelper {
     }
 
     static pathinfo(appRoot: vscode.Uri, document: vscode.TextDocument, line: vscode.TextLine): tp5.Pathinfo {
-        let module: string = '',
-            controller: string = '',
+        let module: string = tp5.getModule(document.uri) || '',
+            tpController: tp5.Controller | null = tp5.getController(document),
+            controller: string = tpController === null ? '' : tpController.name,
             action: string = '';
-        // Find the module
-        const path: string = document.uri.path;
-        let moduleEnd: number = path.indexOf('controller');
-        if (moduleEnd > 0) {
-            moduleEnd--;
-            let moduleStart: number = path.lastIndexOf('/', moduleEnd - 1) || path.lastIndexOf('\\', moduleEnd - 1);
-            if (moduleStart >= 0) {
-                module = path.substring(moduleStart + 1, moduleEnd);
-            }
-        }
-        // Find the controller
-        const code = document.getText();
-        let reg: RegExp = new RegExp('^class (\\\w+)', 'm');
-        let matches: RegExpExecArray | null = reg.exec(code);
-        if (matches) {
-            controller = matches[1];
-        }
-        // Find the action
-        reg = new RegExp('^namespace (.*?);', 'm');
-        matches = reg.exec(code);
-        if (matches && controller !== '') {
-            const result = tp5.php(appRoot, 'method-detail', matches[1] + '\\' + controller);
+        if (tpController !== null) {
+            const result = tp5.php(appRoot, 'method-detail', tpController.fullName);
             if (result.code === 0) {
                 const methods: Array<{ class: string, name: string, startLine: number, endLine: number }> = <Array<{ class: string, name: string, startLine: number, endLine: number }>>result.content;
                 for (let index = 0; index < methods.length; index++) {
@@ -81,11 +62,6 @@ export default class ViewHelper {
                 }
             }
         }
-
-        return {
-            module: module,
-            controller: controller,
-            action: action
-        };
+        return { module, controller, action };
     }
 }
