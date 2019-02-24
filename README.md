@@ -4,9 +4,15 @@ A vscode extension for ThinkPHP5.
 
 ## Features
 
-* Follow the file in the ThinkPHP templates with the output replacement in a file path.
+* Follow the template file in project of ThinkPHP5.
 
-> Tip: Some Features is developing.
+![Goto the template file](./images/goto-template.gif)
+
+* Follow the resource file in the ThinkPHP templates with the output replacement in a file path.
+
+![Goto the template file](./images/goto-resource.gif)
+
+> Tip: The workplace must be a standard project of ThinkPHP5.
 
 ## Requirements
 
