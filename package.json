@@ -3,7 +3,7 @@
 	"displayName": "ThinkPHP5",
 	"publisher": "TanShun",
 	"description": "A vscode extension for ThinkPHP5",
-	"version": "0.0.2",
+	"version": "0.0.3",
 	"engines": {
 		"vscode": "^1.30.0"
 	},
@@ -14,6 +14,7 @@
 		"onLanguage:html",
 		"onLanguage:php"
 	],
+	"repository": "https://github.com/TanShun/vscode-thinkphp5",
 	"main": "./out/extension.js",
 	"contributes": {
 		"commands": [

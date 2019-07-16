@@ -14,11 +14,10 @@ export default class TemplatePathReplacementHover implements vscode.HoverProvide
                 const config: { [key: string]: string } = <{ [key: string]: string }>result.content;
                 for (let key in config) {
                     if (config.hasOwnProperty(key)) {
-                        let reg = new RegExp(`${key}[^ "']+`);
-                        if (document.getWordRangeAtPosition(position, reg) !== undefined) {
-                            let file: string = document.getText(document.getWordRangeAtPosition(position, reg));
-                            file = file.replace(key, config[key]);
-                            file = path.join(root.fsPath, 'public', file);
+                        let reg = new RegExp(`${key}[^ ?"']+`),
+                            range: undefined | vscode.Range = document.getWordRangeAtPosition(position, reg);
+                        if (range !== undefined) {
+                            let file: string = path.join(root.fsPath, 'public', document.getText(range).replace(key, config[key]));
                             try {
                                 fs.accessSync(file, fs.constants.F_OK);
                                 return new vscode.Hover(new vscode.MarkdownString('File path is `' + file + '`, you can follow this link.'));

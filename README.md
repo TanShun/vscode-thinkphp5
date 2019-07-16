@@ -37,4 +37,8 @@ Initial release of thinkphp5. Just done the very basic functions.
 
 Rewrite the bridge between ts and php environment. It can follow the template file which is used in the action.
 
+### 0.0.3
+
+Fixed a bug for getting file name from a url with request parameters.
+
 **Enjoy!**
